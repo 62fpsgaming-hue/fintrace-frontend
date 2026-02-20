@@ -2,16 +2,14 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { ShieldCheck, Mail, Lock, Loader2, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createClient } from '@/lib/supabase/client'
+import { login } from '@/lib/supabase/auth-actions'
 
 export default function LoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -22,48 +20,16 @@ export default function LoginPage() {
     setIsLoading(true)
     setError(null)
 
-    console.log('Starting login process...')
-
     try {
-      const supabase = createClient()
-
-      if (!supabase) {
-        console.warn('Supabase not configured, redirecting to dashboard')
-        window.location.href = '/dashboard'
-        return
-      }
-
-      console.log('Attempting to sign in with Supabase...')
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      console.log('Supabase response:', { data, error })
-
-      if (error) {
-        console.error('Login error:', error)
-        setError(error.message)
-        setIsLoading(false)
-        return
-      }
-
-      if (data.session) {
-        console.log('Login successful! Session:', data.session)
-        console.log('User:', data.user)
-        
-        // Wait a moment for cookies to be set
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
-        console.log('Redirecting to dashboard...')
-        window.location.href = '/dashboard'
-      } else {
-        console.error('No session returned')
-        setError('Login failed. No session created.')
+      const result = await login(email, password)
+      
+      if (result?.error) {
+        setError(result.error)
         setIsLoading(false)
       }
+      // If successful, the server action will redirect
     } catch (err: any) {
-      console.error('Unexpected login error:', err)
+      console.error('Login error:', err)
       setError(err?.message || 'An unexpected error occurred during login. Please try again.')
       setIsLoading(false)
     }
