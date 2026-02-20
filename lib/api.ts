@@ -31,7 +31,7 @@ export async function analyzeTransactions(
   const isHealthy = await checkBackendHealth()
   if (!isHealthy) {
     throw new Error(
-      `Cannot connect to backend server at ${API_BASE_URL}. Please ensure the backend is running on port 8001.`
+      `Cannot connect to backend server at ${API_BASE_URL}. Please check that the backend is running and accessible.`
     )
   }
 

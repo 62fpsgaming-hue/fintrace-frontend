@@ -9,6 +9,7 @@ import { checkBackendHealth } from '@/lib/api'
 export function BackendStatusIndicator() {
   const [status, setStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking')
   const [showAlert, setShowAlert] = useState(false)
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
 
   const checkStatus = async () => {
     setStatus('checking')
@@ -41,6 +42,8 @@ export function BackendStatusIndicator() {
 
   if (!showAlert) return null
 
+  const isProduction = backendUrl.includes('railway.app')
+
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-md">
       <Alert variant="destructive" className="border-2 shadow-2xl">
@@ -50,14 +53,26 @@ export function BackendStatusIndicator() {
             <div>
               <p className="font-bold">Backend Server Not Running</p>
               <p className="mt-1 text-sm">
-                The analysis server is not reachable. Please start the backend:
+                Cannot connect to: <code className="text-xs">{backendUrl}</code>
               </p>
             </div>
-            <div className="rounded-md bg-black/20 p-3 font-mono text-xs">
-              <div className="text-white">cd backend</div>
-              <div className="text-white">./start.sh</div>
-              <div className="mt-1 text-muted-foreground"># or start.bat on Windows</div>
-            </div>
+            {isProduction ? (
+              <div className="rounded-md bg-black/20 p-3 text-xs">
+                <p className="text-white">The Railway backend may be:</p>
+                <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
+                  <li>Sleeping (free tier)</li>
+                  <li>Redeploying</li>
+                  <li>Experiencing issues</li>
+                </ul>
+                <p className="mt-2 text-white">Check Railway dashboard for status</p>
+              </div>
+            ) : (
+              <div className="rounded-md bg-black/20 p-3 font-mono text-xs">
+                <div className="text-white">cd backend</div>
+                <div className="text-white">./start.sh</div>
+                <div className="mt-1 text-muted-foreground"># or start.bat on Windows</div>
+              </div>
+            )}
             <div className="flex gap-2">
               <Button
                 size="sm"
