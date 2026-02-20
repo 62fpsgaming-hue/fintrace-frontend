@@ -22,35 +22,48 @@ export default function LoginPage() {
     setIsLoading(true)
     setError(null)
 
+    console.log('Starting login process...')
+
     try {
       const supabase = createClient()
 
       if (!supabase) {
-        // Auth not configured – redirect straight to the analysis dashboard
         console.warn('Supabase not configured, redirecting to dashboard')
-        router.push('/dashboard')
+        window.location.href = '/dashboard'
         return
       }
 
+      console.log('Attempting to sign in with Supabase...')
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
+      console.log('Supabase response:', { data, error })
+
       if (error) {
         console.error('Login error:', error)
         setError(error.message)
         setIsLoading(false)
-      } else if (data.session) {
-        console.log('Login successful, redirecting to dashboard')
-        // Use window.location for a hard redirect to ensure middleware runs
+        return
+      }
+
+      if (data.session) {
+        console.log('Login successful! Session:', data.session)
+        console.log('User:', data.user)
+        
+        // Wait a moment for cookies to be set
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
+        console.log('Redirecting to dashboard...')
         window.location.href = '/dashboard'
       } else {
-        setError('Login failed. Please try again.')
+        console.error('No session returned')
+        setError('Login failed. No session created.')
         setIsLoading(false)
       }
     } catch (err: any) {
-      console.error('Login error:', err)
+      console.error('Unexpected login error:', err)
       setError(err?.message || 'An unexpected error occurred during login. Please try again.')
       setIsLoading(false)
     }
