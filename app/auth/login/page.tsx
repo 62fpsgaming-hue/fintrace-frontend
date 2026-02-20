@@ -8,13 +8,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { login } from '@/lib/supabase/auth-actions'
+import { login, guestLogin } from '@/lib/supabase/auth-actions'
 
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isGuestLoading, setIsGuestLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -37,6 +38,24 @@ export default function LoginPage() {
       console.error('Login error:', err)
       setError('An unexpected error occurred during login. Please try again.')
       setIsLoading(false)
+    }
+  }
+
+  const handleGuestLogin = async () => {
+    setIsGuestLoading(true)
+    setError(null)
+
+    try {
+      const result = await guestLogin()
+      
+      if (result.success) {
+        router.push(result.redirectTo || '/dashboard')
+        router.refresh()
+      }
+    } catch (err: any) {
+      console.error('Guest login error:', err)
+      setError('An unexpected error occurred. Please try again.')
+      setIsGuestLoading(false)
     }
   }
 
@@ -111,7 +130,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || isGuestLoading}
                 className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
                 size="lg"
               >
@@ -125,6 +144,38 @@ export default function LoginPage() {
                 )}
               </Button>
             </form>
+
+            <div className="mt-4">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Or</span>
+                </div>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleGuestLogin}
+                disabled={isLoading || isGuestLoading}
+                className="mt-4 w-full gap-2"
+                size="lg"
+              >
+                {isGuestLoading ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="size-4" />
+                    Continue as Guest (Demo)
+                  </>
+                )}
+              </Button>
+            </div>
 
             <div className="mt-6 text-center text-sm text-muted-foreground">
               Don't have an account?{' '}

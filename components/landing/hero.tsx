@@ -65,15 +65,16 @@ export function Hero() {
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
           </Button>
         </Link>
-        <a href="#how-it-works">
+        <Link href="/auth/login">
           <Button 
             variant="outline" 
             size="lg" 
-            className="rounded-full px-8 py-6 text-base shadow-sm transition-all hover:shadow-md"
+            className="gap-2 rounded-full px-8 py-6 text-base shadow-sm transition-all hover:shadow-md"
           >
-            See How It Works
+            <Sparkles className="size-4" />
+            Try Demo (No Sign-up)
           </Button>
-        </a>
+        </Link>
       </div>
 
       {/* Enhanced stats bar with glass effect */}

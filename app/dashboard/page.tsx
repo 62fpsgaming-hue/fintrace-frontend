@@ -6,7 +6,7 @@ import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  // If Supabase is not configured, still allow access to the analyze tab
+  // If Supabase is not configured, allow guest access
   if (!supabase) {
     return (
       <DashboardShell
@@ -21,8 +21,15 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // Allow guest access - no redirect to login
   if (!user) {
-    redirect('/auth/login')
+    return (
+      <DashboardShell
+        user={null}
+        history={[]}
+        stats={{ totalAnalyses: 0, totalSuspicious: 0, totalRings: 0, avgProcessingTime: 0 }}
+      />
+    )
   }
 
   const [history, stats] = await Promise.all([

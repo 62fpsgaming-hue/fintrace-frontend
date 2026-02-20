@@ -24,6 +24,13 @@ export async function login(email: string, password: string) {
   return { success: true, redirectTo: '/dashboard' }
 }
 
+export async function guestLogin() {
+  // Guest login bypasses authentication
+  // Just redirect to dashboard - middleware will allow access
+  revalidatePath('/', 'layout')
+  return { success: true, redirectTo: '/dashboard', isGuest: true }
+}
+
 export async function signup(email: string, password: string, fullName: string) {
   const supabase = await createClient()
 
