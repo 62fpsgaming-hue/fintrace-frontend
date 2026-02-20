@@ -2,11 +2,13 @@
   "name": "fintrace",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.0.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "vercel-build": "pnpm install && pnpm run build"
   },
   "dependencies": {
     "next": "^15.1.0",
