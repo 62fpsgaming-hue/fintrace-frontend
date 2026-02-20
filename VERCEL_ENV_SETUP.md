@@ -6,16 +6,16 @@ After deploying to Vercel, you need to configure these environment variables in 
 
 Go to your Vercel project → Settings → Environment Variables and add:
 
-1. **NEXT_PUBLIC_SUPABASE_URL**
+1. **NEXT_PUBLIC_API_URL**
+   - Value: `https://fintrace-backend-production.up.railway.app`
+   - Environment: Production, Preview, Development
+
+2. **NEXT_PUBLIC_SUPABASE_URL**
    - Value: `https://jgtarpigzpcadrsdmfhm.supabase.co`
    - Environment: Production, Preview, Development
 
-2. **NEXT_PUBLIC_SUPABASE_ANON_KEY**
+3. **NEXT_PUBLIC_SUPABASE_ANON_KEY**
    - Value: `sb_publishable_bCRMFF6rrbHWCREJry4uMQ_rSAU4j0M`
-   - Environment: Production, Preview, Development
-
-3. **NEXT_PUBLIC_API_URL** (if you have a backend)
-   - Value: Your backend API URL
    - Environment: Production, Preview, Development
 
 ## After Adding Variables
@@ -26,6 +26,6 @@ Go to your Vercel project → Settings → Environment Variables and add:
 ## Testing
 
 After redeployment:
-1. Try logging in at `/auth/login`
-2. After successful login, you should be redirected to `/dashboard`
+1. Try logging in at `/auth/login` or use "Continue as Guest"
+2. Upload a CSV file to test the backend connection
 3. The session should persist across page refreshes
