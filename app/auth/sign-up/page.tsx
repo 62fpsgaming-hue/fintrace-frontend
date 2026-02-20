@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { ShieldCheck, Mail, Lock, User, Loader2, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { signup } from '@/lib/supabase/auth-actions'
 
 export default function SignUpPage() {
+  const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -37,14 +39,17 @@ export default function SignUpPage() {
     try {
       const result = await signup(email, password, name)
       
-      if (result?.error) {
-        setError(result.error)
+      if (!result.success) {
+        setError(result.error || 'Sign up failed')
         setIsLoading(false)
+      } else {
+        // Redirect on success
+        router.push(result.redirectTo || '/auth/sign-up-success')
+        router.refresh()
       }
-      // If successful, the server action will redirect
     } catch (err: any) {
       console.error('Signup error:', err)
-      setError(err?.message || 'An unexpected error occurred during signup. Please try again.')
+      setError('An unexpected error occurred during signup. Please try again.')
       setIsLoading(false)
     }
   }

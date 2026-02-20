@@ -1,15 +1,14 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 export async function login(email: string, password: string) {
   const supabase = await createClient()
 
   if (!supabase) {
-    // Auth not configured, redirect to dashboard
-    redirect('/dashboard')
+    // Auth not configured
+    return { success: true, redirectTo: '/dashboard' }
   }
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -18,19 +17,19 @@ export async function login(email: string, password: string) {
   })
 
   if (error) {
-    return { error: error.message }
+    return { success: false, error: error.message }
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  return { success: true, redirectTo: '/dashboard' }
 }
 
 export async function signup(email: string, password: string, fullName: string) {
   const supabase = await createClient()
 
   if (!supabase) {
-    // Auth not configured, redirect to dashboard
-    redirect('/dashboard')
+    // Auth not configured
+    return { success: true, redirectTo: '/dashboard' }
   }
 
   const { error } = await supabase.auth.signUp({
@@ -44,20 +43,20 @@ export async function signup(email: string, password: string, fullName: string) 
   })
 
   if (error) {
-    return { error: error.message }
+    return { success: false, error: error.message }
   }
 
-  redirect('/auth/sign-up-success')
+  return { success: true, redirectTo: '/auth/sign-up-success' }
 }
 
 export async function signOut() {
   const supabase = await createClient()
 
   if (!supabase) {
-    redirect('/')
+    return { success: true, redirectTo: '/' }
   }
 
   await supabase.auth.signOut()
   revalidatePath('/', 'layout')
-  redirect('/')
+  return { success: true, redirectTo: '/' }
 }

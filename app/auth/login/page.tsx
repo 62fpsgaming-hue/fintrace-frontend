@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { ShieldCheck, Mail, Lock, Loader2, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { login } from '@/lib/supabase/auth-actions'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -23,14 +25,17 @@ export default function LoginPage() {
     try {
       const result = await login(email, password)
       
-      if (result?.error) {
-        setError(result.error)
+      if (!result.success) {
+        setError(result.error || 'Login failed')
         setIsLoading(false)
+      } else {
+        // Redirect on success
+        router.push(result.redirectTo || '/dashboard')
+        router.refresh()
       }
-      // If successful, the server action will redirect
     } catch (err: any) {
       console.error('Login error:', err)
-      setError(err?.message || 'An unexpected error occurred during login. Please try again.')
+      setError('An unexpected error occurred during login. Please try again.')
       setIsLoading(false)
     }
   }
