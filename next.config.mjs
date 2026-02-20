@@ -11,7 +11,6 @@ const nextConfig = {
     domains: ['jgtarpigzpcadrsdmfhm.supabase.co'],
   },
   reactStrictMode: true,
-  swcMinify: true,
   // Optimized for Vercel deployment
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
