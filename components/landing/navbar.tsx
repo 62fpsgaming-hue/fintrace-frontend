@@ -4,29 +4,14 @@ import Link from 'next/link'
 import { Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  useEffect(() => {
-    try {
-      const supabase = createClient()
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        setIsLoggedIn(!!user)
-      }).catch(() => {
-        // Supabase not available
-      })
-    } catch {
-      // Supabase not configured
-    }
   }, [])
 
   return (
@@ -70,26 +55,11 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          {isLoggedIn ? (
-            <Link href="/dashboard">
-              <Button size="sm" className="rounded-full px-6 shadow-lg shadow-primary/25">
-                Dashboard
-              </Button>
-            </Link>
-          ) : (
-            <>
-              <Link href="/auth/login">
-                <Button variant="ghost" size="sm" className="font-semibold">
-                  Log In
-                </Button>
-              </Link>
-              <Link href="/auth/sign-up">
-                <Button size="sm" className="rounded-full px-6 shadow-lg shadow-primary/25">
-                  Get Started
-                </Button>
-              </Link>
-            </>
-          )}
+          <Link href="/dashboard">
+            <Button size="sm" className="rounded-full px-6 shadow-lg shadow-primary/25">
+              Launch Dashboard
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>

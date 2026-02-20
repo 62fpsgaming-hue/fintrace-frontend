@@ -2,7 +2,8 @@
 
 import type { AnalysisResponse } from './types'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
+// Get API URL from environment variable, fallback to localhost for development
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 const TIMEOUT_MS = 120_000 // 2 minutes
 
 /**

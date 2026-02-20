@@ -56,25 +56,25 @@ export function Hero() {
 
       {/* CTA Buttons with enhanced styling */}
       <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row animate-fade-in [animation-delay:300ms]">
-        <Link href="/auth/sign-up">
+        <Link href="/dashboard">
           <Button 
             size="lg" 
             className="group gap-2 rounded-full px-8 py-6 text-base shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30"
           >
-            Get Started Free
+            Launch Dashboard
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
           </Button>
         </Link>
-        <Link href="/auth/login">
+        <a href="#features">
           <Button 
             variant="outline" 
             size="lg" 
             className="gap-2 rounded-full px-8 py-6 text-base shadow-sm transition-all hover:shadow-md"
           >
             <Sparkles className="size-4" />
-            Try Demo (No Sign-up)
+            Learn More
           </Button>
-        </Link>
+        </a>
       </div>
 
       {/* Enhanced stats bar with glass effect */}

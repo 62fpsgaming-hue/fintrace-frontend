@@ -13,15 +13,10 @@ export function CTA() {
           Upload your transaction data and let the graph engine surface fraud rings, suspicious accounts, and money muling patterns in seconds.
         </p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Link href="/auth/sign-up">
+          <Link href="/dashboard">
             <Button size="lg" className="gap-2 rounded-full px-8 shadow-md">
-              Get Started Free
+              Launch Dashboard
               <ArrowRight className="size-4" />
-            </Button>
-          </Link>
-          <Link href="/auth/login">
-            <Button variant="outline" size="lg" className="rounded-full px-8">
-              Sign In
             </Button>
           </Link>
         </div>
