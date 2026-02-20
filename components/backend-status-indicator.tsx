@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CheckCircle2, XCircle, Loader2, AlertCircle } from 'lucide-react'
+import { CheckCircle2, XCircle, Loader2, AlertCircle, ExternalLink } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { checkBackendHealth } from '@/lib/api'
@@ -9,7 +9,7 @@ import { checkBackendHealth } from '@/lib/api'
 export function BackendStatusIndicator() {
   const [status, setStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking')
   const [showAlert, setShowAlert] = useState(false)
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
   const checkStatus = async () => {
     setStatus('checking')
@@ -42,7 +42,8 @@ export function BackendStatusIndicator() {
 
   if (!showAlert) return null
 
-  const isProduction = backendUrl.includes('railway.app')
+  const isProduction = backendUrl.includes('railway.app') || backendUrl.includes('render.com')
+  const isLocalhost = backendUrl.includes('localhost') || backendUrl.includes('127.0.0.1')
 
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-md">
@@ -51,28 +52,54 @@ export function BackendStatusIndicator() {
         <AlertDescription className="ml-2">
           <div className="space-y-3">
             <div>
-              <p className="font-bold">Backend Server Not Running</p>
+              <p className="font-bold">Backend Connection Failed</p>
               <p className="mt-1 text-sm">
-                Cannot connect to: <code className="text-xs">{backendUrl}</code>
+                Cannot connect to: <code className="rounded bg-black/20 px-1 py-0.5 text-xs">{backendUrl}</code>
               </p>
             </div>
-            {isProduction ? (
+            
+            {isLocalhost && (
               <div className="rounded-md bg-black/20 p-3 text-xs">
-                <p className="text-white">The Railway backend may be:</p>
-                <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
-                  <li>Sleeping (free tier)</li>
-                  <li>Redeploying</li>
-                  <li>Experiencing issues</li>
-                </ul>
-                <p className="mt-2 text-white">Check Railway dashboard for status</p>
-              </div>
-            ) : (
-              <div className="rounded-md bg-black/20 p-3 font-mono text-xs">
-                <div className="text-white">cd backend</div>
-                <div className="text-white">./start.sh</div>
-                <div className="mt-1 text-muted-foreground"># or start.bat on Windows</div>
+                <p className="font-semibold text-white">Start your backend server:</p>
+                <div className="mt-2 space-y-1 font-mono">
+                  <div className="text-white">cd backend</div>
+                  <div className="text-white">uvicorn main:app --reload --port 8000</div>
+                </div>
               </div>
             )}
+
+            {isProduction && (
+              <div className="rounded-md bg-black/20 p-3 text-xs">
+                <p className="font-semibold text-white">Possible issues:</p>
+                <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
+                  <li>Backend is sleeping (Railway free tier)</li>
+                  <li>Backend is redeploying</li>
+                  <li>CORS not configured correctly</li>
+                  <li>Wrong backend URL in environment variables</li>
+                </ul>
+                <a 
+                  href={`${backendUrl}/health`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 inline-flex items-center gap-1 text-white hover:underline"
+                >
+                  Test backend directly
+                  <ExternalLink className="size-3" />
+                </a>
+              </div>
+            )}
+
+            {!isLocalhost && !isProduction && (
+              <div className="rounded-md bg-black/20 p-3 text-xs">
+                <p className="font-semibold text-white">Check your configuration:</p>
+                <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
+                  <li>Verify NEXT_PUBLIC_API_URL in Vercel</li>
+                  <li>Ensure backend is deployed and running</li>
+                  <li>Check CORS settings on backend</li>
+                </ul>
+              </div>
+            )}
+
             <div className="flex gap-2">
               <Button
                 size="sm"
