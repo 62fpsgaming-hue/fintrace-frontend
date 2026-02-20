@@ -27,21 +27,27 @@ export default function LoginPage() {
 
       if (!supabase) {
         // Auth not configured – redirect straight to the analysis dashboard
+        console.warn('Supabase not configured, redirecting to dashboard')
         router.push('/dashboard')
         return
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) {
+        console.error('Login error:', error)
         setError(error.message)
         setIsLoading(false)
+      } else if (data.session) {
+        console.log('Login successful, redirecting to dashboard')
+        // Use window.location for a hard redirect to ensure middleware runs
+        window.location.href = '/dashboard'
       } else {
-        router.push('/dashboard')
-        router.refresh()
+        setError('Login failed. Please try again.')
+        setIsLoading(false)
       }
     } catch (err: any) {
       console.error('Login error:', err)
